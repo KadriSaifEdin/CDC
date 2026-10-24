@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Assistant général de cahier des charges (CDC) IEEE/ANSI 830 — 27 étapes, récapitulatif et export PDF.">
+<title>CDC SUPPORTEUR — StageFlow</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMb2dvIENEQyBXaXphcmQiPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI1NiIgaGVpZ2h0PSI1NiIgcng9IjE0IiBmaWxsPSIjMkU2QjNGIi8+CiAgPHBhdGggZD0iTTIwIDE0aDE4bDggOHYyOGEyIDIgMCAwIDEtMiAySDIwYTIgMiAwIDAgMS0yLTJWMTZhMiAyIDAgMCAxIDItMnoiIGZpbGw9IiNEQUYxREUiLz4KICA8cGF0aCBkPSJNMzggMTR2OGg4IiBmaWxsPSIjMjc1RDQ2Ii8+CiAgPHBhdGggZD0iTTI1IDM2bDYgNiAxMi0xMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkU2QjNGIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K">
+<meta name="theme-color" content="#0D1F16">
+<style>
+:root{
+  --color-header:#0D1F16;
+  --color-body-1:#275D46;
+  --color-body-2:#DAF1DE;
+  --color-button:#2E6B3F;
+  --color-footer:#14381F;
+  --error:#B3261E;
+  --warning:#E65100;
+  --radius:14px;
+  --stepper-w:280px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--color-body-1);color:var(--color-body-2);line-height:1.5}
+button,input,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--color-body-2);outline-offset:2px}
+
+/* Header */
+.site-header{position:sticky;top:0;z-index:20;background:var(--color-header);color:var(--color-body-2);padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.brand{display:flex;gap:.75rem;align-items:center;margin-right:auto}
+.logo{width:44px;height:44px;border-radius:10px;background:var(--color-body-2)}
+.brand-name{margin:0;font-weight:700;font-size:1.1rem}
+.brand-sub{margin:0;font-size:.85rem;opacity:.9}
+.progress-wrap{flex-basis:100%;height:8px;background:rgba(218,241,222,.25);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:var(--color-body-2);transition:width .4s ease}
+.progress-label{flex-basis:100%;margin:0;font-size:.85rem}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:var(--stepper-w) 1fr;gap:1rem;max-width:1180px;margin:0 auto;padding:1rem}
+.main{min-width:0}
+.card{background:var(--color-body-2);color:var(--color-header);border-radius:var(--radius);padding:1.25rem;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.card h1{font-size:1.35rem;margin:.1rem 0 1rem}
+.question{margin:0 0 1.25rem;padding:0;border:0}
+.question legend,.question-label{font-weight:700;margin-bottom:.6rem;display:block}
+.options{display:grid;gap:.6rem}
+.option{display:flex;gap:.6rem;align-items:flex-start;background:#fff;border:2px solid var(--color-button);border-radius:12px;padding:.75rem;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.option:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.option:has(input:checked){background:var(--color-body-2);box-shadow:0 0 0 2px var(--color-button) inset}
+.other-field{margin-top:.5rem}
+input[type="text"],textarea{width:100%;padding:.7rem;border:2px solid var(--color-button);border-radius:10px;background:#fff;color:var(--color-header)}
+.hint{font-size:.85rem;opacity:.85}
+.error{color:#fff;background:var(--error);padding:.7rem 1rem;border-radius:10px;max-width:1180px}
+.edit-banner{background:var(--warning);color:#fff;padding:.6rem 1rem;text-align:center;font-weight:600}
+
+/* Buttons — live motion */
+.btn{position:relative;overflow:hidden;border:2px solid transparent;border-radius:12px;padding:.7rem 1.1rem;cursor:pointer;font-weight:700;transition:transform .2s ease,box-shadow .2s ease,background .2s ease,opacity .2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.22);filter:brightness(1.08)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--color-button);color:#fff}
+.btn-secondary{background:var(--color-body-2);color:var(--color-header);border-color:var(--color-button)}
+.btn-ghost{background:transparent;color:var(--color-body-2);border-color:var(--color-body-2)}
+.main .btn-ghost{color:var(--color-header);border-color:var(--color-header)}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end;margin-top:1rem}
+.site-header .actions{margin:0}
+.btn .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:ripple .45s ease-out forwards;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+
+/* Stepper vertical */
+.stepper-col{position:sticky;top:118px;align-self:start;max-height:calc(100vh - 140px);overflow:auto;padding:.5rem}
+.stepper{list-style:none;margin:0;padding:0;position:relative}
+.stepper::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:4px;background:rgba(218,241,222,.35);border-radius:99px}
+.stepper-fill{position:absolute;left:19px;top:20px;width:4px;background:var(--color-body-2);border-radius:99px;transition:height .55s ease;height:0}
+.stepper-item{position:relative;display:flex;gap:.7rem;align-items:center;padding:.45rem 0;z-index:1}
+.stepper-circle{flex:0 0 40px;width:40px;height:40px;border-radius:50%;border:2px solid var(--color-body-2);display:grid;place-items:center;background:transparent;color:var(--color-body-2);font-weight:800;transition:background .4s ease,transform .3s ease}
+.stepper-item.is-current .stepper-circle{background:var(--color-button);color:#fff;animation:pulse 1.6s ease-in-out infinite}
+.stepper-item.is-done .stepper-circle{background:var(--color-button);color:#fff;animation:pop .35s ease}
+.stepper-item.is-done button.stepper-circle{cursor:pointer}
+.stepper-name{font-size:.92rem}
+button.stepper-circle{cursor:default}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(218,241,222,.55)}70%{box-shadow:0 0 0 12px rgba(218,241,222,0)}100%{box-shadow:0 0 0 0 rgba(218,241,222,0)}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* Step transition */
+.step-enter{animation:stepIn .28s ease both}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+
+/* Recap + modal */
+.recap-group{border-top:2px solid var(--color-button);padding:.8rem 0}
+.recap-group h3{margin:.2rem 0 .5rem}
+.recap-row{display:flex;gap:.6rem;justify-content:space-between;align-items:flex-start;padding:.35rem 0}
+.recap-row p{margin:0}
+.modal{position:fixed;inset:0;background:rgba(13,31,22,.72);display:grid;place-items:center;padding:1rem;z-index:50}
+.modal[hidden]{display:none}
+.modal-card{background:var(--color-body-2);color:var(--color-header);border-radius:var(--radius);padding:1.25rem;max-width:640px;width:100%;max-height:85vh;overflow:auto}
+.edit-item{display:flex;justify-content:space-between;gap:1rem;width:100%;text-align:left;margin:.4rem 0}
+.edit-item small{display:block;font-weight:400;opacity:.85}
+
+/* Annexes (étape 26) */
+.annexes{border-top:2px solid var(--color-button);margin-top:1rem;padding-top:.8rem}
+.annex-import{display:inline-block;cursor:pointer}
+.annex-row{display:flex;gap:.8rem;align-items:flex-start;background:#fff;border:2px solid var(--color-button);border-radius:12px;padding:.7rem;margin:.6rem 0}
+.annex-thumb{width:84px;height:84px;object-fit:cover;border-radius:8px;flex:0 0 84px}
+.annex-meta{flex:1;min-width:0}
+.annex-meta p{margin:.1rem 0 .4rem}
+.annex-name{font-weight:700}
+
+.site-footer{background:var(--color-footer);color:var(--color-body-2);padding:1rem;text-align:center;margin-top:2rem}
+
+/* Mobile: stepper horizontal compact */
+@media (max-width:760px){
+  .layout{grid-template-columns:1fr}
+  .stepper-col{position:sticky;top:104px;z-index:10;background:var(--color-body-1);max-height:none;overflow-x:auto;overflow-y:hidden}
+  .stepper{display:flex;gap:.4rem}
+  .stepper::before,.stepper-fill{display:none}
+  .stepper-item{flex-direction:column;min-width:52px;text-align:center}
+  .stepper-name{font-size:.62rem;line-height:1.1}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  .site-header,.stepper-col,.actions,.site-footer,.edit-banner{display:none!important}
+  body{background:#fff;color:#000}
+  .card,.modal-card{box-shadow:none;background:#fff;color:#000}
+  #recap-panel[hidden]{display:block!important}
+}
+
+/* Mode intégré dans StageFlow (iframe) */
+html.embed .site-header,html.embed .site-footer{display:none!important}
+html.embed .stepper-col{top:8px;max-height:calc(100vh - 16px)}
+@media (max-width:760px){html.embed .stepper-col{top:0}}
+</style>
+</head>
+<body>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add("embed");}catch(e){document.documentElement.classList.add("embed");}</script>
+
+<header class="site-header">
+  <div class="brand">
+    <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMb2dvIENEQyBXaXphcmQiPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI1NiIgaGVpZ2h0PSI1NiIgcng9IjE0IiBmaWxsPSIjMkU2QjNGIi8+CiAgPHBhdGggZD0iTTIwIDE0aDE4bDggOHYyOGEyIDIgMCAwIDEtMiAySDIwYTIgMiAwIDAgMS0yLTJWMTZhMiAyIDAgMCAxIDItMnoiIGZpbGw9IiNEQUYxREUiLz4KICA8cGF0aCBkPSJNMzggMTR2OGg4IiBmaWxsPSIjMjc1RDQ2Ii8+CiAgPHBhdGggZD0iTTI1IDM2bDYgNiAxMi0xMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkU2QjNGIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt="Logo" width="44" height="44">
+    <div>
+      <p class="brand-name">CDC Wizard</p>
+      <p class="brand-sub">Cahier des charges — IEEE/ANSI 830</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button type="button" id="btn-clear" class="btn btn-ghost">Effacer mes données</button>
+  </div>
+  <div class="progress-wrap" aria-hidden="true">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+  <p class="progress-label"><span id="progress-text">Étape 1/27</span></p>
+</header>
+
+<div id="edit-banner" class="edit-banner" hidden>
+  Mode modification : étape <span id="edit-banner-step"></span> — « Continuer » te ramènera à l'étape d'origine.
+</div>
+
+<div class="layout">
+  <aside class="stepper-col" aria-label="Progression">
+    <ol id="stepper" class="stepper"></ol>
+  </aside>
+
+  <main class="main" id="main">
+    <section id="step-panel" class="card" aria-live="polite"></section>
+
+    <div id="recap-panel" class="card" hidden>
+      <h1>Étape 27/27 : Récapitulatif</h1>
+      <p>Relis tes réponses, modifie celles que tu veux, puis génère le PDF.</p>
+      <div id="recap-list"></div>
+
+      <section class="annexes" aria-labelledby="annexes-title">
+        <h2 id="annexes-title">Annexes</h2>
+        <p>Importe les fichiers que tu veux joindre : des <strong>images</strong> ou <strong>n'importe quel fichier</strong>. Écris le titre de chaque annexe — si c'est une image, elle sera présentée comme <strong>« Figure N : ton titre »</strong> et intégrée au PDF. Les autres fichiers sont listés dans le PDF (nom, type, taille, titre).</p>
+        <label class="btn btn-secondary annex-import">
+          Importer des fichiers
+          <input type="file" id="annex-input" multiple hidden>
+        </label>
+        <p id="annex-empty" class="hint">Aucune annexe pour le moment. Max 10 Mo par fichier. Fichiers gardés en mémoire uniquement, jamais envoyés.</p>
+        <p id="annex-error" class="error" role="alert" hidden></p>
+        <div id="annex-list"></div>
+      </section>
+
+      <div class="actions">
+        <button type="button" id="btn-print" class="btn btn-secondary">Imprimer / PDF (repli)</button>
+        <button type="button" id="btn-pdf" class="btn btn-primary">Valider et générer le PDF</button>
+      </div>
+    </div>
+
+    <nav class="actions" aria-label="Navigation">
+      <button type="button" id="btn-back" class="btn btn-secondary">Retour</button>
+      <button type="button" id="btn-modify" class="btn btn-secondary">Modifier</button>
+      <button type="button" id="btn-cancel-edit" class="btn btn-ghost" hidden>Annuler</button>
+      <button type="button" id="btn-next" class="btn btn-primary">Suivant</button>
+    </nav>
+    <p id="form-error" class="error" role="alert" hidden></p>
+  </main>
+</div>
+
+<div id="edit-modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+  <div class="modal-card">
+    <h2 id="edit-modal-title">Modifier une étape déjà remplie</h2>
+    <div id="edit-list"></div>
+    <div class="actions">
+      <button type="button" id="btn-close-edit" class="btn btn-secondary">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div id="session-modal" class="modal" hidden role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <h2>Session inactive</h2>
+    <p>Ta session expire dans 60 secondes. Tes données sont uniquement dans cette session.</p>
+    <div class="actions">
+      <button type="button" id="btn-stay" class="btn btn-primary">Rester</button>
+      <button type="button" id="btn-expire-clear" class="btn btn-secondary">Effacer et recommencer</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>CDC Wizard — Application générale, 100% front-end. Aucune donnée n'est envoyée à un tiers. PDF généré côté client.<br>© 2026 Saif — Tous droits réservés.</p>
+</footer>
+
+<script>
+/* Embedded from js/security.js */
+/* security.js — Assainissement, validation, session d'inactivité (section E).
+   Aucune donnée utilisateur n'est insérée via innerHTML dans l'application :
+   tous les rendus utilisent textContent / createElement. */
+"use strict";
+window.CDCSecurity = (function () {
+  var MAX_LEN = Infinity;
+  function sanitizeText(value) {
+    if (typeof value !== "string") return "";
+    var v = value.trim();
+    return v.replace(/[\u0000-\u001F\u007F]/g, "");
+  }
+  function isValidAnswer(ans) {
+    if (!ans) return false;
+    if (ans.kind === "text") return sanitizeText(ans.value).length >= 1;
+    if (ans.kind === "Autre") return sanitizeText(ans.other || "").length >= 1;
+    return typeof ans.value === "string" && ans.value.length > 0;
+  }
+  /* Expiration par inactivité : 15 min, avertissement à 14 min. */
+  var warnTimer = null, expireTimer = null;
+  function armInactivity(onWarn, onExpire) {
+    clearTimeout(warnTimer); clearTimeout(expireTimer);
+    warnTimer = setTimeout(onWarn, 14 * 60 * 1000);
+    expireTimer = setTimeout(onExpire, 15 * 60 * 1000);
+  }
+  function bindActivity(onWarn, onExpire) {
+    ["click", "keydown", "touchstart"].forEach(function (ev) {
+      document.addEventListener(ev, function () { armInactivity(onWarn, onExpire); }, { passive: true });
+    });
+    armInactivity(onWarn, onExpire);
+  }
+  return { sanitizeText: sanitizeText, isValidAnswer: isValidAnswer, bindActivity: bindActivity, MAX_LEN: MAX_LEN };
+})();
+
+</script>
+<script>
+/* Embedded from js/storage.js */
+/* storage.js — Sauvegarde automatique en sessionStorage UNIQUEMENT (jamais localStorage).
+   Chiffrement optionnel AES-GCM (Web Crypto) avec clé générée par session, gardée en mémoire. */
+"use strict";
+window.CDCStorage = (function () {
+  var KEY = "cdc-wizard-v1";
+  function save(state) {
+    try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* session pleine : on ignore, l'état reste en mémoire */ }
+  }
+  function load() {
+    try {
+      var raw = sessionStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function clear() { try { sessionStorage.removeItem(KEY); } catch (e) {} }
+
+  var cachedKey = null;
+  function getKey() {
+    if (cachedKey) return cachedKey;
+    cachedKey = crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+    return cachedKey;
+  }
+  function encryptText(plain) {
+    return getKey().then(function (key) {
+      var iv = crypto.getRandomValues(new Uint8Array(12));
+      return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, new TextEncoder().encode(plain))
+        .then(function (buf) { return { iv: Array.from(iv), data: Array.from(new Uint8Array(buf)) }; });
+    });
+  }
+  return { save: save, load: load, clear: clear, encryptText: encryptText };
+})();
+
+</script>
+<script>
+/* Embedded from js/stepper.js */
+/* stepper.js — Stepper vertical (gauche) / horizontal compact (mobile).
+   Cercles numérotés, 3 états, ligne qui se remplit, halo pulsant sur l'étape en cours.
+   Les étapes terminées sont cliquables, les étapes futures non atteintes ne le sont pas. */
+"use strict";
+window.CDCStepper = (function () {
+  function render(steps, current, answers, onJump) {
+    var ol = document.getElementById("stepper");
+    ol.textContent = "";
+    var fill = document.createElement("div");
+    fill.className = "stepper-fill";
+    var doneCount = 0;
+    steps.forEach(function (s, i) { if (answers[i] && Object.keys(answers[i]).length) doneCount = Math.max(doneCount, i + 1); });
+    fill.style.height = steps.length > 1 ? "calc(" + ((Math.max(current, doneCount - 1)) / (steps.length - 1) * 100) + "% - 40px)" : "0";
+    ol.appendChild(fill);
+
+    steps.forEach(function (step, i) {
+      var li = document.createElement("li");
+      li.className = "stepper-item" + (i === current ? " is-current" : "") + (answers[i] && Object.keys(answers[i]).length ? " is-done" : "");
+      var done = !!(answers[i] && Object.keys(answers[i]).length);
+      var circle = document.createElement(done && i !== current ? "button" : "span");
+      circle.className = "stepper-circle";
+      circle.textContent = done && i !== current ? "✓" : String(i + 1);
+      if (done && i !== current) {
+        circle.type = "button";
+        circle.setAttribute("aria-label", "Revoir l'étape " + (i + 1) + " : " + step.name);
+        circle.addEventListener("click", function () { onJump(i); });
+      }
+      var label = document.createElement("span");
+      label.className = "stepper-name";
+      label.textContent = step.name;
+      li.appendChild(circle); li.appendChild(label);
+      ol.appendChild(li);
+    });
+    document.getElementById("progress-bar").style.width = Math.round((current + 1) / steps.length * 100) + "%";
+    document.getElementById("progress-text").textContent = "Étape " + (current + 1) + "/" + steps.length + " : " + steps[current].name;
+  }
+  return { render: render };
+})();
+
+</script>
+<script>
+/* Embedded from js/wizard-data.js */
+/* wizard-data.js — Définition des 27 étapes. 1 thème/étape, 1 à 3 questions, 3-4 options + Autre. */
+"use strict";
+window.CDC_STEPS = [
+ {name:"Projet", questions:[
+   {id:"idee", label:"Quel est ton projet ? (une phrase)", type:"text", max:200},
+   {id:"type", label:"Type de projet", type:"choice", options:["Site vitrine / portfolio","E-commerce","Blog / contenu","Application de gestion / dashboard"]},
+   {id:"systeme", label:"Quel est le système concerné par le cahier des charges que tu prépares ?", type:"choice", options:["Général / universel — valable pour tout projet","Spécifique — un seul domaine précis","Défini par chaque utilisateur à cette étape","Système d'information interne d'une organisation"]}]},
+ {name:"But du projet", questions:[
+   {id:"probleme", label:"Quel problème principal le projet résout-il ?", type:"choice", options:["L'utilisateur ne sait pas structurer son besoin","Perte de temps / idée mal cadrée avant développement","Manque d'un outil simple et guidé","Tous ces problèmes"]},
+   {id:"contexte", label:"Situation actuelle, sans ce projet ?", type:"choice", options:["Tout se fait à la main, sans structure","Outils existants trop complexes","Aucun outil utilisé, idée floue","Combinaison des cas précédents"]},
+   {id:"objectif", label:"Objectif final", type:"choice", options:["Présenter / informer","Vendre / convertir","Gérer / automatiser un processus","Guider puis générer un livrable"]}]},
+ {name:"Mesure du succès", questions:[
+   {id:"critere", label:"Critère principal de succès (chiffré)", type:"choice", options:["Objectif atteint en moins de 20 minutes d'utilisation","Taux de complétion supérieur ou égal à 90 %","0 donnée perdue lors des modifications","Satisfaction utilisateurs supérieure ou égale à 4/5"]},
+   {id:"delai_succes", label:"Délai pour mesurer le succès après lancement", type:"choice", options:["1 mois","3 mois","6 mois","12 mois"]}]},
+ {name:"Maître d'ouvrage", questions:[
+   {id:"moa", label:"Qui est le maître d'ouvrage (représente les intérêts des utilisateurs) ?", type:"choice", options:["Toi seul (porteur du projet)","Une entreprise / une agence","Une association / un organisme public","Défini par chaque utilisateur"]},
+   {id:"validation", label:"Qui valide le livrable final ?", type:"choice", options:["Le maître d'ouvrage seul","Le maître d'ouvrage et les utilisateurs","Un comité de validation","Validation automatique par critères chiffrés"]}]},
+ {name:"Parties prenantes", questions:[
+   {id:"prenantes", label:"Autres parties prenantes impliquées", type:"choice", options:["Développeurs / prestataires","Utilisateurs finaux uniquement","Partenaires / fournisseurs de services","Aucune autre partie prenante"]},
+   {id:"frequence", label:"Fréquence d'implication des parties prenantes", type:"choice", options:["À chaque étape clé","Hebdomadaire","Uniquement au début et à la validation","Sur demande"]}]},
+ {name:"Utilisateurs", questions:[
+   {id:"roles", label:"Rôles des utilisateurs directs", type:"choice", options:["Visiteur uniquement","Utilisateur enregistré","Administrateur + utilisateur","Plusieurs rôles avec permissions différentes"]},
+   {id:"sous_categories", label:"Sous-catégories d'utilisateurs", type:"choice", options:["Débutants et confirmés","Particuliers et professionnels","Aucune sous-catégorie","Par âge / par langue"]}]},
+ {name:"Profil des utilisateurs", questions:[
+   {id:"experience", label:"Connaissance / expérience / expertise du public", type:"choice", options:["Débutant, aucune connaissance technique","Intermédiaire","Expert / professionnel","Mixte — le parcours s'adapte"]},
+   {id:"age", label:"Âge précis du public principal", type:"choice", options:["18-25 ans","26-40 ans","41-60 ans","Tous âges (18 ans et plus)"]},
+   {id:"langues_users", label:"Langues parlées par les utilisateurs", type:"choice", options:["Français","Français + Anglais","Français + Arabe + Anglais","Anglais uniquement"]}]},
+ {name:"Contraintes de conception", questions:[
+   {id:"techno", label:"Technologies imposées ou interdites", type:"choice", options:["HTML/CSS/JS uniquement, sans framework","Framework imposé (à préciser en Autre)","Aucune imposition","Backend interdit — front-end uniquement"]},
+   {id:"architecture", label:"Architecture retenue", type:"choice", options:["100 % front-end, aucun backend","Front-end + backend avec comptes","Front-end d'abord, backend optionnel ensuite","Application monopage (SPA)"]}]},
+ {name:"Environnement", questions:[
+   {id:"navigateurs", label:"Navigateurs / OS ciblés", type:"choice", options:["Chrome, Firefox, Edge, Safari — versions récentes","Mobile uniquement (Android / iOS)","Desktop uniquement","Tous navigateurs modernes, mobile-first"]},
+   {id:"partenaires", label:"Applications / services partenaires", type:"choice", options:["Aucun service partenaire","Paiement en ligne","Cartes / géolocalisation","Messagerie / réseaux sociaux"]},
+   {id:"hebergement", label:"Hébergement envisagé", type:"choice", options:["Hébergement statique HTTPS","Serveur dédié / VPS","Cloud","Non défini à ce stade"]}]},
+ {name:"Délai et budget", questions:[
+   {id:"delai", label:"Délai de réalisation", type:"choice", options:["Moins de 2 semaines","2 à 4 semaines","1 à 3 mois","Plus de 3 mois"]},
+   {id:"budget", label:"Budget (fourchette chiffrée)", type:"choice", options:["0 — projet personnel / gratuit","Moins de 1 000","1 000 à 5 000","Plus de 5 000 (préciser la devise en Autre)"]}]},
+ {name:"Glossaire et conventions", questions:[
+   {id:"nommage", label:"Convention de nommage", type:"choice", options:["Français, termes métier définis dans un glossaire","Anglais pour le code, français pour l'interface","Noms courts et explicites, liste imposée","Aucune convention imposée"]},
+   {id:"glossaire", label:"Un glossaire est-il fourni avec le livrable ?", type:"choice", options:["Oui — glossaire complet","Oui — termes principaux uniquement","Non","Glossaire généré à partir des réponses"]}]},
+ {name:"Faits et hypothèses", questions:[
+   {id:"hypotheses", label:"Hypothèse principale du projet", type:"choice", options:["Les utilisateurs ont un accès internet stable","Les utilisateurs savent utiliser un navigateur","Aucune installation n'est requise","Toutes ces hypothèses"]},
+   {id:"dependances", label:"Dépendance principale", type:"choice", options:["Disponibilité de l'hébergement HTTPS","Disponibilité des services partenaires","Aucune dépendance externe","Dépendance à une équipe de développement"]}]},
+ {name:"Portée du travail", questions:[
+   {id:"fera", label:"Ce que le site FERA (portée principale)", type:"choice", options:["Présenter et collecter des réponses / données","Présenter, collecter et générer un livrable","Gérer des comptes et des contenus","Vendre et traiter des commandes"]},
+   {id:"fera_pas", label:"Ce que le site NE FERA PAS", type:"choice", options:["Aucun paiement en ligne","Aucune gestion de comptes utilisateurs","Aucun envoi de données à un tiers","Combinaison à préciser en Autre"]}]},
+ {name:"Pages", questions:[
+   {id:"pages", label:"Pages / écrans principaux", type:"choice", options:["Une seule page (parcours par étapes)","Accueil + pages de contenu","Accueil + espace utilisateur + administration","Pages générées selon les réponses"]},
+   {id:"page_principale", label:"Action principale par écran", type:"choice", options:["Une seule action principale par écran","Menu complet sur chaque écran","Tableau de bord avec plusieurs actions","Selon le type d'écran"]}]},
+ {name:"Fonctionnalités par rôle", questions:[
+   {id:"fonction_principale", label:"Fonctionnalité principale (déclencheur → réponse)", type:"choice", options:["Clic sur Suivant → valider et passer à l'étape suivante","Soumission de formulaire → enregistrer et confirmer","Recherche → afficher les résultats filtrés","Sélection → afficher le détail"]},
+   {id:"fonction_admin", label:"Fonctionnalité d'administration", type:"choice", options:["Aucune administration","Modifier les contenus","Gérer les utilisateurs et les rôles","Consulter des statistiques"]}]},
+ {name:"Événements non désirables", questions:[
+   {id:"erreur_saisie", label:"Réponse du système à une saisie invalide", type:"choice", options:["Message d'erreur précis, saisie conservée","Bloquer la progression jusqu'à correction","Revenir à la dernière valeur valide","Message + journalisation de l'erreur"]},
+   {id:"panne", label:"Réponse à une panne / perte de connexion", type:"choice", options:["Mode hors-ligne, données conservées en session","Message clair + bouton Réessayer","Rechargement automatique","Aucune donnée n'est perdue dans tous les cas"]}]},
+ {name:"Données", questions:[
+   {id:"entites", label:"Entités de données principales", type:"choice", options:["Utilisateur, Réponse, Étape, Document généré","Produit, Commande, Client","Article, Catégorie, Commentaire","Entités définies selon le projet de l'utilisateur"]},
+   {id:"stockage", label:"Stockage des données", type:"choice", options:["Session du navigateur uniquement, aucun serveur","Base de données côté serveur","Fichier exporté (PDF / JSON) uniquement","Session + export, serveur optionnel"]}]},
+ {name:"Formulaires et validations", questions:[
+   {id:"validation_form", label:"Règles de validation des formulaires", type:"choice", options:["Champs obligatoires, longueur limitée, format contrôlé","Validation à la soumission uniquement","Validation en temps réel champ par champ","Validation à chaque étape avant Suivant"]},
+   {id:"autre_obligatoire", label:"Le choix « Autre » exige-t-il un texte ?", type:"choice", options:["Oui — texte obligatoire, 3 à 200 caractères","Oui — texte facultatif","Non — aucun texte","Texte obligatoire uniquement pour certaines questions"]}]},
+ {name:"Ergonomie et style", questions:[
+   {id:"style", label:"Style visuel (la palette imposée reste appliquée)", type:"choice", options:["Moderne et minimaliste","Institutionnel et sobre","Créatif","Coloré mais limité à la palette imposée"]},
+   {id:"disposition", label:"Disposition de l'interface", type:"choice", options:["Stepper latéral + une action par écran (imposé)","Menu horizontal classique","Tableau de bord en cartes","Page unique déroulante"]}]},
+ {name:"Facilité d'utilisation", questions:[
+   {id:"prise_en_main", label:"Prise en main visée (critère chiffré)", type:"choice", options:["Productif en moins de 5 minutes, sans formation","Productif en moins de 15 minutes avec aide en ligne","Formation de 1 heure requise","Aucun objectif chiffré"]},
+   {id:"taux_erreur", label:"Taux d'erreurs et satisfaction visés", type:"choice", options:["Erreurs < 5 %, satisfaction ≥ 4/5","Erreurs < 10 %, satisfaction ≥ 3,5/5","Feedback après chaque étape","Mesure après lancement uniquement"]}]},
+ {name:"Langues et préférences", questions:[
+   {id:"langues_ui", label:"Langues de l'interface", type:"choice", options:["Français uniquement","Français + Anglais","Français + Arabe + Anglais avec RTL","Anglais uniquement"]},
+   {id:"preferences", label:"Préférences affichées", type:"choice", options:["Mode sombre en plus de la palette imposée","Aucun mode sombre — palette imposée uniquement","Taille de texte réglable","Langue + taille de texte réglables"]}]},
+ {name:"Performance et fiabilité", questions:[
+   {id:"performance", label:"Performance visée (chiffrée)", type:"choice", options:["Affichage < 2 s, action < 300 ms","Affichage < 3 s, action < 500 ms","PDF généré en < 5 s côté client","Combinaison des critères précédents"]},
+   {id:"disponibilite", label:"Disponibilité et robustesse visées", type:"choice", options:["Disponibilité 99 %, mode hors-ligne toléré","Disponibilité 99,9 %, sauvegarde de session","Aucun engagement chiffré","Robustesse : saisies invalides sans perte de données"]}]},
+ {name:"Maintenance et support", questions:[
+   {id:"maintenance", label:"Qui maintient le site et délai d'ajout d'un élément ?", type:"choice", options:["Le porteur seul — ajout en moins de 1 jour","Une équipe / un autre développeur — ajout en moins de 1 semaine","Prestataire externe — délai contractuel","Maintenance non prévue"]},
+   {id:"support", label:"Support et déploiement", type:"choice", options:["Aide en ligne + FAQ, déploiement en moins de 1 heure","Manuel uniquement","Aucun support prévu","Support + versions mensuelles"]}]},
+ {name:"Sécurité et données personnelles", questions:[
+   {id:"acces", label:"Accès et authentification (le socle imposé section E reste appliqué)", type:"choice", options:["Aucun compte — session anonyme protégée","Comptes avec rôles et permissions côté serveur","Compte administrateur uniquement","Accès par lien personnel"]},
+   {id:"consentement", label:"Données personnelles, consentement et cookies", type:"choice", options:["Aucune collecte, aucun cookie de suivi","Collecte avec information + consentement explicite","Cookies essentiels uniquement, bandeau d'information","Politique de confidentialité + notification des changements"]}]},
+ {name:"Livrables", questions:[
+   {id:"fichiers", label:"Structure des livrables attendue", type:"choice", options:["Site complet (HTML/CSS/JS) + PDF du CDC","Site uniquement","CDC (PDF) uniquement","Site + CDC + documentation + tests"]},
+   {id:"tests", label:"Tests livrés", type:"choice", options:["Tests du parcours complet et des modifications","Tests unitaires uniquement","Aucun test formel — vérification manuelle","Tests + critères C4 vérifiés à 100 %"]},
+   {id:"annexes", label:"Veux-tu joindre des annexes à la fin ? (importées au récapitulatif (étape 27))", type:"choice", options:["Oui — des images (figures avec titre)","Oui — des fichiers quelconques","Oui — images et fichiers","Non, aucune annexe"]}]},
+ {name:"Remarques complémentaires", questions:[
+   {id:"remarques_complementaires", label:"Remarques supplémentaires : besoins, contraintes ou éléments non abordés dans les étapes précédentes", type:"text", optional:true, placeholder:"Écris ici toutes les remarques ou informations supplémentaires…"}
+ ]},
+ {name:"Récapitulatif", questions:[]}
+];
+
+</script>
+<script>
+/* Embedded from js/wizard.js */
+/* wizard.js — Moteur du parcours par étapes.
+   État en mémoire + sauvegarde session (storage.js). Rendu en textContent uniquement. */
+"use strict";
+(function () {
+  var steps = window.CDC_STEPS;
+  var state = { current: 0, answers: {}, editReturn: null, editing: false };
+  var saved = window.CDCStorage.load();
+  if (saved && typeof saved === "object" && saved.answers) {
+    state.current = Math.min(saved.current || 0, steps.length - 1);
+    state.answers = saved.answers || {};
+  }
+  window.CDCWizard = { steps: steps, state: state };
+
+  var panel = document.getElementById("step-panel");
+  var recapPanel = document.getElementById("recap-panel");
+  var btnNext = document.getElementById("btn-next");
+  var btnBack = document.getElementById("btn-back");
+  var btnCancel = document.getElementById("btn-cancel-edit");
+  var errBox = document.getElementById("form-error");
+
+  function persist() { window.CDCStorage.save({ current: state.current, answers: state.answers }); }
+  function showError(msg) { errBox.textContent = msg || ""; errBox.hidden = !msg; }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function render() {
+    var isRecap = state.current === steps.length - 1;
+    panel.hidden = isRecap;
+    recapPanel.hidden = !isRecap;
+    document.getElementById("edit-banner").hidden = !state.editing;
+    if (state.editing) document.getElementById("edit-banner-step").textContent = String(state.current + 1);
+    btnCancel.hidden = !state.editing;
+    btnBack.disabled = state.current === 0 && !state.editing;
+    btnNext.textContent = state.editing ? "Continuer" : (state.current === steps.length - 2 ? "Aller au récapitulatif" : "Suivant");
+    window.CDCStepper.render(steps, state.current, state.answers, function (i) {
+      if (!state.editing) window.CDCEdit.enterEdit(i, state.current);
+    });
+    if (isRecap) { renderRecap(); return; }
+    renderStep();
+    persist();
+  }
+
+  function renderStep() {
+    var step = steps[state.current];
+    panel.textContent = "";
+    panel.classList.remove("step-enter"); void panel.offsetWidth; panel.classList.add("step-enter");
+    panel.appendChild(el("h1", null, "Étape " + (state.current + 1) + "/27 : " + step.name));
+    var currentAnswers = state.answers[state.current] || {};
+
+    step.questions.forEach(function (q) {
+      var fs = el("fieldset", "question");
+      fs.appendChild(el("legend", null, q.label));
+      var savedAns = currentAnswers[q.id];
+      if (q.type === "text") {
+        var ta = document.createElement("textarea");
+        ta.rows = q.id === "remarques_complementaires" ? 7 : 2; ta.autocomplete = "off";
+        if (q.placeholder) ta.placeholder = q.placeholder;
+        ta.dataset.qid = q.id; ta.dataset.qtype = "text";
+        ta.value = savedAns ? savedAns.value : "";
+        ta.setAttribute("aria-label", q.label);
+        fs.appendChild(ta);
+      } else {
+        var wrap = el("div", "options");
+        q.options.concat(["Autre"]).forEach(function (opt) {
+          var lab = el("label", "option");
+          var radio = document.createElement("input");
+          radio.type = "radio"; radio.name = "q-" + q.id; radio.value = opt;
+          radio.dataset.qid = q.id;
+          if (savedAns && ((opt === "Autre" && savedAns.kind === "Autre") || (opt !== "Autre" && savedAns.kind === "choix" && savedAns.value === opt))) radio.checked = true;
+          lab.appendChild(radio);
+          lab.appendChild(el("span", null, opt === "Autre" ? "Autre (précise)" : opt));
+          wrap.appendChild(lab);
+        });
+        fs.appendChild(wrap);
+        var other = document.createElement("input");
+        other.type = "text"; other.autocomplete = "off";
+        other.className = "other-field"; other.dataset.otherFor = q.id;
+        other.placeholder = "Si « Autre » : précise ici (sans limite de caractères)";
+        other.value = savedAns && savedAns.kind === "Autre" ? (savedAns.other || "") : "";
+        other.setAttribute("aria-label", "Précision Autre pour : " + q.label);
+        fs.appendChild(other);
+      }
+      panel.appendChild(fs);
+    });
+  }
+
+  function collect() {
+    var step = steps[state.current];
+    var out = {};
+    for (var i = 0; i < step.questions.length; i++) {
+      var q = step.questions[i];
+      if (q.type === "text") {
+        var ta = panel.querySelector('textarea[data-qid="' + q.id + '"]');
+        var v = window.CDCSecurity.sanitizeText(ta ? ta.value : "");
+        if (!v && q.optional) continue;
+        if (!v) return { error: "Réponds à : " + q.label };
+        out[q.id] = { kind: "text", value: v, question: q.label };
+      } else {
+        var checked = panel.querySelector('input[name="q-' + q.id + '"]:checked');
+        if (!checked) return { error: "Choisis une réponse pour : " + q.label };
+        if (checked.value === "Autre") {
+          var otherEl = panel.querySelector('input[data-other-for="' + q.id + '"]');
+          var other = window.CDCSecurity.sanitizeText(otherEl ? otherEl.value : "");
+          if (!other) return { error: "Le champ « Autre » ne peut pas être vide pour : " + q.label };
+          out[q.id] = { kind: "Autre", value: "Autre", other: other, question: q.label };
+        } else {
+          out[q.id] = { kind: "choix", value: checked.value, question: q.label };
+        }
+      }
+      if (!window.CDCSecurity.isValidAnswer(out[q.id])) return { error: "Réponse invalide pour : " + q.label };
+    }
+    return { answers: out };
+  }
+
+  function answerText(a) { return a.kind === "Autre" ? a.other : a.value; }
+  window.CDCWizard.answerText = answerText;
+
+  function renderRecap() {
+    var list = document.getElementById("recap-list");
+    list.textContent = "";
+    steps.slice(0, -1).forEach(function (step, i) {
+      var group = el("div", "recap-group");
+      group.appendChild(el("h3", null, "Étape " + (i + 1) + " : " + step.name));
+      var ans = state.answers[i] || {};
+      step.questions.forEach(function (q) {
+        var a = ans[q.id];
+        var row = el("div", "recap-row");
+        var p = el("p", null, q.label + " → " + (a ? answerText(a) : "— (non rempli)"));
+        var b = el("button", "btn btn-secondary", "Modifier");
+        b.type = "button";
+        b.addEventListener("click", function () { window.CDCEdit.enterEdit(i, steps.length - 1); });
+        row.appendChild(p); row.appendChild(b);
+        group.appendChild(row);
+      });
+      list.appendChild(group);
+    });
+  }
+
+  btnNext.addEventListener("click", function () {
+    showError("");
+    if (state.current === steps.length - 1) return; /* le récap a ses propres boutons */
+    var res = collect();
+    if (res.error) { showError(res.error); return; }
+    var previous = state.answers[state.current];
+    state.answers[state.current] = res.answers;
+    persist();
+    if (state.editing) {
+      var target = state.editReturn != null ? state.editReturn : state.current;
+      var impacts = window.CDCEdit.checkImpact(state.current, previous, res.answers);
+      state.editing = false; state.editReturn = null;
+      state.current = target;
+      if (impacts.length) window.CDCEdit.offerImpactReview(impacts);
+      render();
+      return;
+    }
+    if (state.current < steps.length - 1) state.current++;
+    render();
+  });
+
+  btnBack.addEventListener("click", function () {
+    showError("");
+    if (state.editing) { state.editing = false; state.current = state.editReturn; state.editReturn = null; render(); return; }
+    if (state.current > 0) { state.current--; render(); }
+  });
+  btnCancel.addEventListener("click", function () {
+    if (!state.editing) return;
+    state.editing = false; state.current = state.editReturn; state.editReturn = null;
+    showError(""); render();
+  });
+
+  document.getElementById("btn-clear").addEventListener("click", function () {
+    window.CDCStorage.clear(); if (window.CDCAnnexes) window.CDCAnnexes.clear();
+    state.answers = {}; state.current = 0; state.editing = false; state.editReturn = null;
+    render();
+  });
+
+  /* Effet ripple sur les boutons (décoratif, aucun innerHTML) */
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest(".btn") : null;
+    if (!b) return;
+    var r = document.createElement("span"); r.className = "ripple";
+    var rect = b.getBoundingClientRect(); var size = Math.max(rect.width, rect.height);
+    r.style.width = r.style.height = size + "px";
+    r.style.left = (e.clientX - rect.left - size / 2) + "px";
+    r.style.top = (e.clientY - rect.top - size / 2) + "px";
+    b.appendChild(r); setTimeout(function () { r.remove(); }, 500);
+  });
+
+  /* Session : avertissement à 14 min, effacement à 15 min */
+  var sessionModal = document.getElementById("session-modal");
+  window.CDCSecurity.bindActivity(
+    function () { sessionModal.hidden = false; },
+    function () { window.CDCStorage.clear(); if (window.CDCAnnexes) window.CDCAnnexes.clear(); state.answers = {}; state.current = 0; sessionModal.hidden = true; render(); }
+  );
+  document.getElementById("btn-stay").addEventListener("click", function () { sessionModal.hidden = true; });
+  document.getElementById("btn-expire-clear").addEventListener("click", function () {
+    window.CDCStorage.clear(); if (window.CDCAnnexes) window.CDCAnnexes.clear(); state.answers = {}; state.current = 0; sessionModal.hidden = true; render();
+  });
+
+  window.CDCWizard.render = render;
+  render();
+})();
+
+</script>
+<script>
+/* Embedded from js/edit-mode.js */
+/* edit-mode.js — Bouton « Modifier » permanent + mode modification.
+   Règle C2 : on mémorise étape_de_retour, on pré-remplit l'étape choisie,
+   « Continuer » (wizard.js) ramène automatiquement à l'étape d'origine, sans rien perdre. */
+"use strict";
+window.CDCEdit = (function () {
+  var modal = document.getElementById("edit-modal");
+  var list = document.getElementById("edit-list");
+
+  function enterEdit(stepIndex, returnTo) {
+    var W = window.CDCWizard;
+    W.state.editReturn = returnTo;
+    W.state.editing = true;
+    W.state.current = stepIndex;
+    modal.hidden = true;
+    W.render();
+  }
+
+  function openPanel() {
+    var W = window.CDCWizard;
+    list.textContent = "";
+    var any = false;
+    W.steps.slice(0, -1).forEach(function (step, i) {
+      var ans = W.state.answers[i];
+      if (!ans || !Object.keys(ans).length) return;
+      any = true;
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "btn btn-secondary edit-item";
+      var main = document.createElement("span");
+      main.textContent = "Étape " + (i + 1) + " : " + step.name;
+      var summary = document.createElement("small");
+      summary.textContent = step.questions.map(function (q) {
+        var a = ans[q.id]; return a ? W.answerText(a) : "—";
+      }).join(" · ");
+      main.appendChild(summary);
+      btn.appendChild(main);
+      btn.addEventListener("click", function () { enterEdit(i, W.state.current); });
+      list.appendChild(btn);
+    });
+    if (!any) {
+      var p = document.createElement("p");
+      p.textContent = "Aucune étape remplie pour le moment. Termine une étape, puis reviens ici pour la modifier.";
+      list.appendChild(p);
+    }
+    modal.hidden = false;
+  }
+
+  /* Impact : si la réponse « type » ou « système » (étape 1) change, les étapes
+     13 (Portée), 14 (Pages) et 15 (Fonctionnalités) peuvent être concernées. */
+  function checkImpact(stepIndex, previous, next) {
+    if (stepIndex !== 0 || !previous) return [];
+    var changed = ["type", "systeme"].some(function (k) {
+      return previous[k] && next[k] && window.CDCWizard.answerText(previous[k]) !== window.CDCWizard.answerText(next[k]);
+    });
+    return changed ? [12, 13, 14] : [];
+  }
+  function offerImpactReview(impacts) {
+    var names = impacts.map(function (i) { return "Étape " + (i + 1) + " : " + window.CDCWizard.steps[i].name; }).join(", ");
+    if (window.confirm("Cette modification peut impacter : " + names + ".\nVeux-tu revoir l'une de ces étapes maintenant ? (Tes réponses restent conservées.)")) {
+      enterEdit(impacts[0], window.CDCWizard.state.current);
+    }
+  }
+
+  document.getElementById("btn-modify").addEventListener("click", openPanel);
+  document.getElementById("btn-close-edit").addEventListener("click", function () { modal.hidden = true; });
+  modal.addEventListener("click", function (e) { if (e.target === modal) modal.hidden = true; });
+
+  return { enterEdit: enterEdit, openPanel: openPanel, checkImpact: checkImpact, offerImpactReview: offerImpactReview };
+})();
+
+</script>
+<script>
+/* Embedded from js/annexes.js */
+/* annexes.js — Annexes de fin de parcours (demandées à l'étape 25, importées à l'étape 26).
+   L'utilisateur importe les fichiers qu'il veut : images ou tout autre fichier.
+   Pour chaque annexe, il écrit un titre. Si le fichier est une image, l'annexe
+   est étiquetée « Figure N : titre » ; sinon « Annexe N : titre ».
+   Fichiers gardés EN MÉMOIRE uniquement (jamais envoyés, jamais en localStorage) :
+   ils disparaissent à la fermeture / à l'effacement de la session.
+   Rendu en textContent uniquement ; titres assainis (security.js). */
+"use strict";
+window.CDCAnnexes = (function () {
+  var MAX_FILE = 10 * 1024 * 1024; /* 10 Mo par fichier */
+  var MAX_TITLE = 120;
+  var items = []; /* {file, name, type, size, isImage, dataUrl|null, title} */
+
+  function formatSize(n) {
+    if (n < 1024) return n + " o";
+    if (n < 1024 * 1024) return Math.round(n / 1024) + " Ko";
+    return (n / (1024 * 1024)).toFixed(1) + " Mo";
+  }
+  function labelFor(item, index) {
+    var title = item.title || item.name;
+    return item.isImage ? "Figure " + figureNumber(index) + " : " + title : "Annexe " + (index + 1) + " : " + title;
+  }
+  function figureNumber(upto) {
+    var n = 0;
+    for (var i = 0; i <= upto && i < items.length; i++) if (items[i].isImage) n++;
+    return n;
+  }
+
+  function render() {
+    var list = document.getElementById("annex-list");
+    if (!list) return;
+    list.textContent = "";
+    items.forEach(function (item, i) {
+      var row = document.createElement("div");
+      row.className = "annex-row";
+      if (item.isImage && item.dataUrl) {
+        var img = document.createElement("img");
+        img.className = "annex-thumb"; img.src = item.dataUrl; img.alt = "";
+        row.appendChild(img);
+      }
+      var meta = document.createElement("div");
+      meta.className = "annex-meta";
+      var name = document.createElement("p");
+      name.className = "annex-name";
+      name.textContent = labelFor(item, i);
+      var detail = document.createElement("p");
+      detail.className = "hint";
+      detail.textContent = item.name + " — " + (item.type || "type inconnu") + " — " + formatSize(item.size);
+      var titleInput = document.createElement("input");
+      titleInput.type = "text"; titleInput.maxLength = MAX_TITLE; titleInput.autocomplete = "off";
+      titleInput.placeholder = item.isImage ? "Titre de la figure (ex : Maquette de la page d'accueil)" : "Titre de l'annexe";
+      titleInput.value = item.title || "";
+      titleInput.setAttribute("aria-label", "Titre de l'annexe pour " + item.name);
+      titleInput.addEventListener("input", function () {
+        item.title = window.CDCSecurity.sanitizeText(titleInput.value).slice(0, MAX_TITLE);
+        name.textContent = labelFor(item, i);
+      });
+      var remove = document.createElement("button");
+      remove.type = "button"; remove.className = "btn btn-secondary"; remove.textContent = "Retirer";
+      remove.addEventListener("click", function () { items.splice(i, 1); render(); });
+      meta.appendChild(name); meta.appendChild(detail); meta.appendChild(titleInput);
+      row.appendChild(meta); row.appendChild(remove);
+      list.appendChild(row);
+    });
+    var empty = document.getElementById("annex-empty");
+    if (empty) empty.hidden = items.length > 0;
+  }
+
+  function addFiles(fileList) {
+    var err = document.getElementById("annex-error");
+    if (err) { err.textContent = ""; err.hidden = true; }
+    Array.prototype.forEach.call(fileList, function (file) {
+      if (file.size > MAX_FILE) {
+        if (err) { err.textContent = "Fichier trop volumineux (max 10 Mo) : " + file.name; err.hidden = false; }
+        return;
+      }
+      var item = {
+        file: file, name: file.name, type: file.type, size: file.size,
+        isImage: /^image\//.test(file.type), dataUrl: null, title: ""
+      };
+      items.push(item);
+      if (item.isImage) {
+        var reader = new FileReader();
+        reader.addEventListener("load", function () {
+          item.dataUrl = String(reader.result);
+          var probe = new Image();
+          probe.addEventListener("load", function () { item.imgW = probe.naturalWidth; item.imgH = probe.naturalHeight; });
+          probe.src = item.dataUrl;
+          render();
+        });
+        reader.readAsDataURL(file);
+      }
+      render();
+    });
+  }
+
+  function init() {
+    var input = document.getElementById("annex-input");
+    if (!input) return;
+    input.addEventListener("change", function () { addFiles(input.files); input.value = ""; });
+    render();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+
+  return {
+    getAll: function () { return items.slice(); },
+    labelFor: labelFor,
+    formatSize: formatSize,
+    clear: function () { items = []; render(); }
+  };
+})();
+
+</script>
+<script>
+/* ==========================================================================
+   pdf.js — Moteur d'export PDF de CDC Wizard (code original, sans dépendance)
+   Copyright (c) 2026 Saif. All rights reserved.
+   Ce code est la propriété exclusive de Saif. Toute copie, modification,
+   redistribution ou réutilisation, totale ou partielle, sans autorisation
+   écrite de l'auteur est interdite.
+   Aucune donnée n'est envoyée à un tiers : le PDF est construit côté client.
+   ========================================================================== */
+"use strict";
+(function () {
+  /* ---- Notice de propriété (vérifiée avant chaque export) ---- */
+  var NOTICE = "Copyright (c) 2026 Saif. All rights reserved.";
+  var SIG = 4182937541;
+  function sig(s) { var h = 5381; for (var i = 0; i < s.length; i++) { h = ((h << 5) + h + s.charCodeAt(i)) | 0; } return h >>> 0; }
+  function noticeOk() { return sig(NOTICE) === SIG; }
+
+  var MM = 72 / 25.4;               /* 1 mm en points PDF */
+  var PT = 25.4 / 72;               /* 1 pt en mm */
+
+  /* ---- Texte : normalisation vers WinAnsi (cp1252) ---- */
+  var CP = {8364:128,8218:130,402:131,8222:132,8230:133,8224:134,8225:135,710:136,8240:137,352:138,8249:139,338:140,381:142,
+            8216:145,8217:146,8220:147,8221:148,8226:149,8211:150,8212:151,732:152,8482:153,353:154,8250:155,339:156,382:158,376:159};
+  function norm(s) {
+    var o = "";
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i), ch = s.charAt(i);
+      if (c === 10) { o += ch; continue; }
+      if (c === 13 || c < 9 || (c > 10 && c < 32) || c === 127) { continue; }
+      if (c === 9) { o += "  "; continue; }
+      if (c < 127 || (c >= 160 && c <= 255) || CP[c]) { o += ch; continue; }
+      if ((c >= 0x2000 && c <= 0x200A) || c === 0x202F || c === 0x205F || c === 0x3000) { o += " "; continue; }
+      if (c === 0x200B || c === 0x200C || c === 0x200D || c === 0x200E || c === 0x200F || c === 0xFEFF) { continue; }
+      if (c === 8594) { o += "->"; continue; }
+      if (c === 8592) { o += "<-"; continue; }
+      if (c === 10003 || c === 10004) { o += "v"; continue; }
+      if (c === 0x2212) { o += "-"; continue; }
+      if (c >= 0xD800 && c <= 0xDBFF) { i++; }
+      o += "?";
+    }
+    return o;
+  }
+  function enc(s) {
+    var o = "";
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      o += String.fromCharCode(c < 256 ? c : (CP[c] || 63));
+    }
+    return o.replace(/[\\()]/g, "\\$&");
+  }
+  function str2b(s) { var b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) { b[i] = s.charCodeAt(i) & 255; } return b; }
+
+  var mctx = null;
+  function measure(s, size, bold) {                 /* largeur en mm (métriques Helvetica ≈ Arial) */
+    if (typeof document !== "undefined") {
+      if (!mctx) { mctx = document.createElement("canvas").getContext("2d"); }
+      mctx.font = (bold ? "bold " : "") + "100px Helvetica, Arial, sans-serif";
+      return mctx.measureText(s).width * size / 100 * PT;
+    }
+    return s.length * size * 0.5 * PT;
+  }
+
+  /* ---- Images ---- */
+  function b64(dataUrl) {
+    var raw = atob(dataUrl.slice(dataUrl.indexOf(",") + 1));
+    return str2b(raw);
+  }
+  function parseJpeg(b) {
+    if (b[0] !== 0xFF || b[1] !== 0xD8) { return null; }
+    var i = 2;
+    while (i < b.length - 9) {
+      if (b[i] !== 0xFF) { i++; continue; }
+      var m = b[i + 1];
+      if (m === 0xFF) { i++; continue; }
+      if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+        return { h: (b[i + 5] << 8) | b[i + 6], w: (b[i + 7] << 8) | b[i + 8], c: b[i + 9] };
+      }
+      if (m === 0x01 || (m >= 0xD0 && m <= 0xD9)) { i += 2; continue; }
+      i += 2 + ((b[i + 2] << 8) | b[i + 3]);
+    }
+    return null;
+  }
+  function prepareImage(a) {                         /* → {bytes,w,h,c} JPEG, ou null */
+    return new Promise(function (resolve) {
+      try {
+        var m = /^data:([^;,]+)(;base64)?,/.exec(a.dataUrl);
+        if (m && m[2] && /jpe?g/i.test(m[1])) {
+          var b = b64(a.dataUrl), p = parseJpeg(b);
+          if (p && (p.c === 1 || p.c === 3)) { resolve({ bytes: b, w: p.w, h: p.h, c: p.c }); return; }
+        }
+      } catch (e) { /* on retombe sur la conversion canvas */ }
+      var im = new Image();
+      im.onload = function () {
+        try {
+          var cv = document.createElement("canvas");
+          cv.width = im.naturalWidth; cv.height = im.naturalHeight;
+          var cx = cv.getContext("2d");
+          cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height);
+          cx.drawImage(im, 0, 0);
+          var b2 = b64(cv.toDataURL("image/jpeg", 0.92)), p2 = parseJpeg(b2);
+          resolve(p2 ? { bytes: b2, w: p2.w, h: p2.h, c: 3 } : null);
+        } catch (e) { resolve(null); }
+      };
+      im.onerror = function () { resolve(null); };
+      im.src = a.dataUrl;
+    });
+  }
+
+  /* ---- Document PDF ---- */
+  function Doc() { this.pages = []; this.imgs = []; this.cur = null; this.curPage = null; this.addPage(); }
+  function col(c) { return (c[0] / 255).toFixed(3) + " " + (c[1] / 255).toFixed(3) + " " + (c[2] / 255).toFixed(3); }
+  function fx(v) { return (v * MM).toFixed(2); }
+  function fy(v) { return ((297 - v) * MM).toFixed(2); }
+
+  Doc.prototype.addPage = function () {
+    this.curPage = { c: [], im: [] };
+    this.cur = this.curPage.c;
+    this.pages.push(this.curPage);
+  };
+  Doc.prototype.setPage = function (i) { this.curPage = this.pages[i]; this.cur = this.curPage.c; };
+  Doc.prototype.rect = function (x, y, w, h, c) {
+    this.cur.push(col(c) + " rg " + fx(x) + " " + fy(y + h) + " " + (w * MM).toFixed(2) + " " + (h * MM).toFixed(2) + " re f");
+  };
+  Doc.prototype.text = function (s, x, y, o) {
+    o = o || {};
+    var size = o.size || 10, bold = !!o.bold;
+    s = norm(String(s)).replace(/\n/g, " ");
+    var w = measure(s, size, bold);
+    if (o.align === "right") { x -= w; } else if (o.align === "center") { x -= w / 2; }
+    this.cur.push(col(o.color || [0, 0, 0]) + " rg BT /F" + (bold ? 2 : 1) + " " + size + " Tf " + fx(x) + " " + fy(y) + " Td (" + enc(s) + ") Tj ET");
+  };
+  Doc.prototype.image = function (img, x, y, w, h) {
+    var idx = this.imgs.indexOf(img);
+    if (idx < 0) { idx = this.imgs.push(img) - 1; }
+    if (this.curPage.im.indexOf(idx) < 0) { this.curPage.im.push(idx); }
+    this.cur.push("q " + (w * MM).toFixed(2) + " 0 0 " + (h * MM).toFixed(2) + " " + fx(x) + " " + fy(y + h) + " cm /Im" + idx + " Do Q");
+  };
+  Doc.prototype.wrap = function (s, width, size, bold) {
+    s = norm(String(s == null ? "" : s));
+    var out = [];
+    s.split("\n").forEach(function (par) {
+      var line = "";
+      par.split(" ").forEach(function (w) {
+        var t = line ? line + " " + w : w;
+        if (measure(t, size, bold) <= width) { line = t; return; }
+        if (line) { out.push(line); line = ""; }
+        while (w.length > 1 && measure(w, size, bold) > width) {
+          var k = w.length;
+          while (k > 1 && measure(w.slice(0, k), size, bold) > width) { k--; }
+          out.push(w.slice(0, k)); w = w.slice(k);
+        }
+        line = w;
+      });
+      out.push(line);
+    });
+    return out;
+  };
+
+  /* Tableau avec en-tête répété, lignes alternées, coupure de page (y compris au milieu d'une longue cellule). */
+  Doc.prototype.table = function (o) {
+    var self = this, size = o.size || 8, pad = o.pad || 2, cw = o.widths;
+    var lh = size * PT * 1.2, x0 = 14, top = 20, bottom = 280;
+    var total = cw.reduce(function (a, b) { return a + b; }, 0);
+    var y = o.startY;
+
+    var hl = o.head.map(function (t, i) { return self.wrap(t, cw[i] - 2 * pad, size, true); });
+    var hh = Math.max.apply(null, hl.map(function (l) { return l.length; })) * lh + 2 * pad;
+    function header() {
+      self.rect(x0, y, total, hh, o.headFill);
+      var x = x0;
+      hl.forEach(function (lines, i) {
+        lines.forEach(function (s, k) { self.text(s, x + pad, y + pad + k * lh + size * PT * 0.95, { size: size, bold: true, color: o.headText }); });
+        x += cw[i];
+      });
+      y += hh;
+    }
+    function newPage() { self.addPage(); y = top; }
+
+    if (y + hh + lh + 2 * pad > bottom) { newPage(); }
+    header();
+
+    o.body.forEach(function (row, r) {
+      var cells = row.map(function (t, i) { return self.wrap(t, cw[i] - 2 * pad, size, false); });
+      var n = Math.max.apply(null, cells.map(function (l) { return l.length; }));
+      var start = 0;
+      while (start < n) {
+        var avail = Math.floor((bottom - y - 2 * pad) / lh);
+        if (avail < 1) { newPage(); header(); continue; }
+        var take = Math.min(avail, n - start), h = take * lh + 2 * pad;
+        if (r % 2 === 1 && o.altFill) { self.rect(x0, y, total, h, o.altFill); }
+        var x = x0;
+        cells.forEach(function (lines, i) {
+          for (var k = 0; k < take; k++) {
+            if (lines[start + k] !== undefined) {
+              self.text(lines[start + k], x + pad, y + pad + k * lh + size * PT * 0.95, { size: size, color: o.textColor || [20, 20, 20] });
+            }
+          }
+          x += cw[i];
+        });
+        y += h; start += take;
+      }
+    });
+    return y;
+  };
+
+  /* Assemblage binaire du fichier PDF (1.4). */
+  Doc.prototype.build = function (meta) {
+    var chunks = [], off = 0, offs = [], self = this;
+    function put(s) { var b = typeof s === "string" ? str2b(s) : s; chunks.push(b); off += b.length; }
+    function obj(id, body) { offs[id] = off; put(id + " 0 obj\n" + body + "\nendobj\n"); }
+    var nImg = this.imgs.length, nPg = this.pages.length, total = 5 + nImg + 2 * nPg;
+
+    put("%PDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
+    var kids = [];
+    for (var p = 0; p < nPg; p++) { kids.push((6 + nImg + 2 * p + 1) + " 0 R"); }
+    obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
+    obj(2, "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + nPg + " >>");
+    obj(3, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
+    obj(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+    var d = new Date(), z = function (n) { return ("0" + n).slice(-2); };
+    var cd = "D:" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + z(d.getHours()) + z(d.getMinutes()) + z(d.getSeconds());
+    obj(5, "<< /Title (" + enc(norm(meta.title)) + ") /Author (" + enc(norm(meta.author)) + ") /Creator (" + enc(norm(meta.creator)) +
+           ") /Producer (" + enc(norm(meta.producer)) + ") /CreationDate (" + cd + ") >>");
+
+    this.imgs.forEach(function (im, i) {
+      var id = 6 + i;
+      offs[id] = off;
+      put(id + " 0 obj\n<< /Type /XObject /Subtype /Image /Width " + im.w + " /Height " + im.h + " /ColorSpace /" +
+          (im.c === 1 ? "DeviceGray" : "DeviceRGB") + " /BitsPerComponent 8 /Filter /DCTDecode /Length " + im.bytes.length + " >>\nstream\n");
+      put(im.bytes);
+      put("\nendstream\nendobj\n");
+    });
+    this.pages.forEach(function (pg, i) {
+      var cid = 6 + nImg + 2 * i, pid = cid + 1;
+      var stream = str2b(pg.c.join("\n"));
+      offs[cid] = off;
+      put(cid + " 0 obj\n<< /Length " + stream.length + " >>\nstream\n"); put(stream); put("\nendstream\nendobj\n");
+      var xo = pg.im.map(function (k) { return "/Im" + k + " " + (6 + k) + " 0 R"; }).join(" ");
+      obj(pid, "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>" +
+               (xo ? " /XObject << " + xo + " >>" : "") + " >> /Contents " + cid + " 0 R >>");
+    });
+    var xref = off, x = "xref\n0 " + (total + 1) + "\n0000000000 65535 f \n";
+    for (var k = 1; k <= total; k++) { x += ("0000000000" + offs[k]).slice(-10) + " 00000 n \n"; }
+    put(x + "trailer\n<< /Size " + (total + 1) + " /Root 1 0 R /Info 5 0 R >>\nstartxref\n" + xref + "\n%%EOF\n");
+    return chunks;
+  };
+
+  /* ---- Contenu du cahier des charges ---- */
+  function rows() {
+    var W = window.CDCWizard; var out = [];
+    W.steps.slice(0, -1).forEach(function (step, i) {
+      var ans = W.state.answers[i] || {};
+      step.questions.forEach(function (q) {
+        if (q.id === "remarques_complementaires") return;
+        var a = ans[q.id];
+        out.push([
+          (i + 1) + " — " + step.name,
+          q.label,
+          a ? W.answerText(a) : "— (non rempli)",
+          a ? (a.kind === "Autre" ? "Autre" : (a.kind === "text" ? "Texte libre" : "choix")) : "—"
+        ]);
+      });
+    });
+    return out;
+  }
+
+  var GREEN = [46, 107, 63], LIGHT = [218, 241, 222], DARK = [20, 56, 31], WHITE = [255, 255, 255];
+
+  async function generate() {
+    if (!noticeOk()) { alert("Export indisponible : la notice de propriété de ce code a été modifiée."); return; }
+    var W = window.CDCWizard, doc = new Doc(), now = new Date();
+
+    doc.rect(0, 0, 210, 26, [13, 31, 22]);
+    doc.text("Cahier des charges — CDC Wizard", 14, 11, { size: 16, color: LIGHT });
+    doc.text("IEEE/ANSI 830 — Généré le " + now.toLocaleDateString("fr-FR") + " à " + now.toLocaleTimeString("fr-FR"), 14, 19, { size: 10, color: LIGHT });
+    doc.text("Récapitulatif complet des réponses (27 étapes)", 14, 34, { size: 12, color: DARK });
+
+    var y = doc.table({
+      head: ["Étape", "Question", "Réponse", "Type"], body: rows(), startY: 38,
+      widths: [38, 62, 62, 20], size: 8, pad: 2, headFill: GREEN, headText: WHITE, altFill: LIGHT
+    });
+
+    /* Remarque complémentaire saisie à l'étape 26. */
+    var noteAnswer = W.state.answers[25] && W.state.answers[25].remarques_complementaires;
+    var noteText = noteAnswer && noteAnswer.value ? String(noteAnswer.value).trim() : "";
+    y += 10;
+    if (y > 255) { doc.addPage(); y = 20; }
+    y = doc.table({
+      head: ["Remarque"], body: [[noteText || "Aucune remarque supplémentaire."]], startY: y,
+      widths: [182], size: 9, pad: 3, headFill: GREEN, headText: WHITE
+    });
+
+    /* Annexes : liste, puis chaque image sur sa page avec sa légende. */
+    var annexes = window.CDCAnnexes ? window.CDCAnnexes.getAll() : [];
+    if (annexes.length) {
+      y += 10;
+      if (y > 260) { doc.addPage(); y = 20; }
+      doc.text("Annexes", 14, y, { size: 12, color: DARK });
+      doc.table({
+        head: ["Référence", "Titre", "Fichier", "Type", "Taille"],
+        body: annexes.map(function (a, i) {
+          return [window.CDCAnnexes.labelFor(a, i).split(" : ")[0], a.title || a.name, a.name, a.type || "—", window.CDCAnnexes.formatSize(a.size)];
+        }),
+        startY: y + 4, widths: [22, 50, 50, 34, 26], size: 8, pad: 2, headFill: GREEN, headText: WHITE, altFill: LIGHT
+      });
+      for (var i = 0; i < annexes.length; i++) {
+        var a = annexes[i];
+        if (!a.isImage || !a.dataUrl) continue;
+        doc.addPage();
+        var im = await prepareImage(a);
+        if (im) {
+          var w = 182, h = w * im.h / im.w;
+          if (h > 235) { h = 235; w = h * im.w / im.h; }
+          doc.image(im, 105 - w / 2, 20, w, h);
+        } else {
+          doc.text("Image illisible dans le PDF : " + a.name, 14, 24, { size: 12, color: DARK });
+        }
+        doc.text(window.CDCAnnexes.labelFor(a, i), 105, 285, { size: 10, color: DARK, align: "center" });
+      }
+    }
+
+    /* Pied de page : numérotation + mention de propriété sur chaque page. */
+    for (var p = 0; p < doc.pages.length; p++) {
+      doc.setPage(p);
+      doc.text("CDC Wizard — © 2026 Saif", 14, 290, { size: 8, color: [39, 93, 70] });
+      doc.text("Page " + (p + 1) + " / " + doc.pages.length, 196, 290, { size: 8, color: [39, 93, 70], align: "right" });
+    }
+
+    var blob = new Blob(doc.build({
+      title: "Cahier des charges - CDC Wizard", author: "Saif", creator: "CDC Wizard",
+      producer: "CDC Wizard PDF engine - " + NOTICE
+    }), { type: "application/pdf" });
+    var url = URL.createObjectURL(blob), link = document.createElement("a");
+    link.href = url; link.download = "cahier-des-charges.pdf";
+    document.body.appendChild(link); link.click();
+    setTimeout(function () { link.remove(); URL.revokeObjectURL(url); }, 1500);
+  }
+
+  document.getElementById("btn-pdf").addEventListener("click", function () {
+    generate().catch(function (e) { if (window.console) { console.error(e); } window.print(); });
+  });
+  document.getElementById("btn-print").addEventListener("click", function () { window.print(); });
+})();
+
+</script>
+</body>
+</html>

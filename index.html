@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#0D1F16">
+<meta name="description" content="StageFlow — Système de gestion de stages de l'université : offres, candidatures, conventions, présence, suivi, évaluations et soutenances.">
+<title>StageFlow — Système de gestion de stages</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="splash" class="splash" aria-hidden="true">
+  <img src="assets/logo.svg" alt="" width="72" height="72">
+  <div class="splash-bar"><span></span></div>
+</div>
+
+<header class="site-header">
+  <div class="brand">
+    <img class="logo" src="assets/logo.svg" alt="Logo" width="44" height="44">
+    <div>
+      <p class="brand-name" data-i18n="appName">StageFlow</p>
+      <p class="brand-sub" data-i18n="appSub">Système de gestion de stages · Université</p>
+    </div>
+  </div>
+  <label class="lang-label">
+    <span data-i18n="lang">Langue</span>
+    <select id="lang-select" aria-label="Langue / Language">
+      <option value="fr">Français</option>
+      <option value="ar">العربية</option>
+    </select>
+  </label>
+  <button type="button" id="btn-font" class="btn btn-ghost" title="Taille du texte">A+</button>
+  <button type="button" id="btn-dark" class="btn btn-ghost" aria-pressed="false">🌙 <span data-i18n="dark">Mode sombre</span></button>
+  <button type="button" id="btn-cdc" class="btn btn-ghost" hidden>📄 <span data-i18n="cdcBtn">CDC SUPPORTEUR</span></button>
+  <span id="user-chip" class="tag user-chip" hidden></span>
+  <button type="button" id="btn-logout" class="btn btn-ghost" hidden data-i18n="logout">Déconnexion</button>
+</header>
+
+<!-- ======== AUTH ======== -->
+<main id="auth-view" class="auth-view" hidden>
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+      <span class="hero-grid"></span>
+      <span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Plateforme universitaire de gestion des stages</span>
+        <h1 class="hero-title">Du premier clic à la <span id="rotator" class="rotator">soutenance</span></h1>
+        <p class="lead">Une seule plateforme pour les étudiants, les entreprises et l'université : offres, candidatures, convention, suivi et évaluation, sans papier ni relances.</p>
+        <ol class="pipeline" aria-label="Parcours d'un stage">
+          <li><span class="dot">1</span><span>Offre</span></li>
+          <li><span class="dot">2</span><span>Candidature</span></li>
+          <li><span class="dot">3</span><span>Convention</span></li>
+          <li><span class="dot">4</span><span>Stage</span></li>
+          <li><span class="dot">5</span><span>Soutenance</span></li>
+        </ol>
+        <div class="hero-stats">
+          <div><b data-count="offers">0</b><span>offres publiées</span></div>
+          <div><b data-count="students">0</b><span>étudiants</span></div>
+          <div><b data-count="companies">0</b><span>entreprises</span></div>
+        </div>
+      </div>
+
+      <section class="auth-card" aria-label="Authentification">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab on" role="tab" data-authtab="login" data-i18n="login">Connexion</button>
+          <button type="button" class="tab" role="tab" data-authtab="register" data-i18n="register">Inscription</button>
+          <button type="button" class="tab" role="tab" data-authtab="reset" data-i18n="reset">Mot de passe oublié</button>
+        </div>
+        <p id="auth-msg" role="alert" hidden></p>
+
+        <form id="form-login" class="auth-form" data-autosave="login" novalidate>
+          <h2 data-i18n="loginTitle">Connexion</h2>
+          <label class="f" for="login-email">Numéro universitaire (étudiant) ou email</label>
+          <input type="text" id="login-email" required autocomplete="username" placeholder="E-1001 ou nom@exemple.tn">
+          <label class="f" for="login-pass" data-i18n="password">Mot de passe</label>
+          <div class="pw-wrap">
+            <input type="password" id="login-pass" required autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-toggle="login-pass" aria-label="Afficher le mot de passe">👁</button>
+          </div>
+          <div class="actions"><button type="submit" class="btn btn-wide" data-i18n="loginBtn">Se connecter</button></div>
+          <div class="demo-box">
+            <p class="muted">Comptes de démonstration — clique pour remplir :</p>
+            <div class="chips">
+              <button type="button" class="chip" data-demo="E-1001|etud1234">Étudiant</button>
+              <button type="button" class="chip" data-demo="entreprise@tech.tn|entr1234">Entreprise</button>
+              <button type="button" class="chip" data-demo="admin@technova.tn|aent1234">Admin entreprise</button>
+              <button type="button" class="chip" data-demo="encadrant@univ.tn|encad1234">Encadrant</button>
+              <button type="button" class="chip" data-demo="admin@univ.tn|admin1234">Admin université</button>
+            </div>
+          </div>
+        </form>
+
+        <form id="form-register" class="auth-form" data-autosave="register" novalidate hidden>
+          <h2 data-i18n="registerTitle">Créer un compte</h2>
+          <p class="muted">Tu es…</p>
+          <div class="role-pick" role="radiogroup" aria-label="Type de compte">
+            <button type="button" class="role-opt on" role="radio" aria-checked="true" data-role="etudiant">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/><path d="M22 9v6"/></svg>
+              <b>Étudiant</b><small>Postuler aux offres</small>
+            </button>
+            <button type="button" class="role-opt" role="radio" aria-checked="false" data-role="entreprise">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="18" rx="1"/><path d="M15 9h5v12h-5"/><path d="M8 7h3M8 11h3M8 15h3"/></svg>
+              <b>Entreprise</b><small>Publier des offres</small>
+            </button>
+            <button type="button" class="role-opt" role="radio" aria-checked="false" data-role="universite">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>
+              <b>Université</b><small>Piloter les stages</small>
+            </button>
+          </div>
+          <p id="reg-hint" class="muted role-hint"></p>
+
+          <div data-for="etudiant">
+            <label class="f" for="reg-numero">Numéro universitaire (carte d'étudiant) *</label>
+            <input type="text" id="reg-numero" maxlength="30" placeholder="Ex : E-1003" autocomplete="off">
+          </div>
+          <div data-for="entreprise" hidden>
+            <label class="f" for="reg-company">Raison sociale *</label>
+            <input type="text" id="reg-company" maxlength="100" autocomplete="organization">
+          </div>
+          <label class="f" for="reg-name" id="lbl-reg-name">Nom complet</label>
+          <input type="text" id="reg-name" maxlength="100" autocomplete="name">
+          <label class="f" for="reg-email">Email</label>
+          <input type="email" id="reg-email" autocomplete="email">
+          <label class="f" for="reg-extra" id="lbl-reg-extra">Filière</label>
+          <input type="text" id="reg-extra" maxlength="100">
+          <label class="f" for="reg-pass" data-i18n="password">Mot de passe</label>
+          <div class="pw-wrap">
+            <input type="password" id="reg-pass" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-toggle="reg-pass" aria-label="Afficher le mot de passe">👁</button>
+          </div>
+          <div class="meter" aria-hidden="true"><span id="pw-meter"></span></div>
+          <p class="muted" id="pw-hint">8 caractères minimum, avec au moins une lettre et un chiffre.</p>
+          <div class="actions"><button type="submit" class="btn btn-wide" data-i18n="registerBtn">Créer le compte</button></div>
+        </form>
+
+        <form id="form-reset" class="auth-form" novalidate hidden>
+          <h2 data-i18n="resetTitle">Réinitialisation du mot de passe</h2>
+          <label class="f" for="reset-email">Email</label>
+          <input type="email" id="reset-email" required>
+          <label class="f" for="reset-token">Code du lien reçu par email (valable 1 heure)</label>
+          <input type="text" id="reset-token" maxlength="12" autocomplete="off" placeholder="Code à 6 caractères">
+          <label class="f" for="reset-pass" data-i18n="newPass">Nouveau mot de passe</label>
+          <input type="password" id="reset-pass" autocomplete="new-password">
+          <div class="actions"><button type="submit" class="btn btn-wide" data-i18n="resetBtn">Réinitialiser</button></div>
+          <p class="muted">Étape 1 : saisis ton email et clique — un code (affiché ici, faute d'email réel) est généré, valable 1 heure. Étape 2 : saisis le code et le nouveau mot de passe (8 caractères min, une lettre et un chiffre).</p>
+        </form>
+      </section>
+    </div>
+  </section>
+
+  <section class="who">
+    <h2 class="reveal">Une plateforme, trois espaces</h2>
+    <div class="who-grid">
+      <article class="who-card reveal" data-pick="etudiant">
+        <h3>Étudiant</h3>
+        <ul><li>Parcourir et filtrer les offres</li><li>Postuler et suivre ses candidatures</li><li>Générer sa convention en PDF</li><li>Pointer sa présence, déposer ses rapports</li></ul>
+        <button type="button" class="btn btn-small" data-pick-btn="etudiant">Créer mon compte étudiant</button>
+      </article>
+      <article class="who-card reveal" data-pick="entreprise">
+        <h3>Entreprise</h3>
+        <ul><li>Publier des offres en 3 étapes</li><li>Examiner les candidatures, planifier des entretiens</li><li>Valider la convention et la présence</li><li>Évaluer le stagiaire</li></ul>
+        <button type="button" class="btn btn-small" data-pick-btn="entreprise">Inscrire mon entreprise</button>
+      </article>
+      <article class="who-card reveal" data-pick="universite">
+        <h3>Université</h3>
+        <ul><li>Importer la liste officielle des étudiants</li><li>Affecter les encadrants</li><li>Valider les conventions, planifier les soutenances</li><li>Suivre les statistiques et le journal</li></ul>
+        <button type="button" class="btn btn-small" data-pick-btn="universite">Demander un compte université</button>
+      </article>
+    </div>
+  </section>
+</main>
+
+<!-- ======== APP ======== -->
+<div id="app-view" class="layout" hidden>
+  <aside class="sidebar">
+    <nav id="side-nav" aria-label="Navigation principale"></nav>
+  </aside>
+  <main id="view" class="main" aria-live="polite"></main>
+</div>
+
+<div id="modal" class="modal" hidden role="dialog" aria-modal="true">
+  <div class="modal-card" id="modal-card"></div>
+</div>
+
+<footer class="site-footer">
+  <p data-i18n="footer">StageFlow — Système de gestion de stages. Démonstration front-end : un backend est requis en production (voir README).</p>
+  <button type="button" id="btn-wipe" class="btn btn-ghost btn-small" data-i18n="wipe">Effacer mes données / réinitialiser la démo</button>
+</footer>
+
+<script src="js/vendor/jspdf.umd.min.js"></script>
+<script src="js/vendor/jspdf.plugin.autotable.min.js"></script>
+<script src="js/vendor/sql-wasm.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/sqldb.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
